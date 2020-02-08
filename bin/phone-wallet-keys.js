@@ -91,6 +91,7 @@ const initializeExpressApp = async () => {
   const info = await packageInfo()
   if (!info.scripts.start) {
     info.scripts.start = `node -r dotenv/config bin/${info.name}.js`
+    info.scripts['dev:generate-self-signed-certs'] = 'mkdir certs; openssl req -nodes -new -x509 -keyout certs/server.key -out certs/server.cert'
     await fs.outputJson(packageJsonPath(), info, { spaces: 2 })
   }
 
