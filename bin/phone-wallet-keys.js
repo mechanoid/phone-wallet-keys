@@ -64,8 +64,15 @@ try {
   const packageJsonPath = () => path.resolve(process.cwd(), 'package.json')
 
   const packageInfo = async () => {
-    const data = await fs.readFile(packageJsonPath())
-    return JSON.parse(data)
+    try {
+      const data = await fs.readFile(packageJsonPath())
+      return JSON.parse(data)
+    } catch (e) {
+      console.error(`the current folder does not seem to be a npm project yet.
+
+Please initialize a npm project with \`npm init\``)
+      process.exit(1)
+    }
   }
 
   const createFromFile = (src, target) => fs.copy(tplPath(src), projectPath(target || src))
