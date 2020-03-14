@@ -1,8 +1,12 @@
-# Phone Wallet Keys
-
 Phone Wallet Keys is a bootstrapping help for nodejs projects.
 
-Usage:
+## Install
+
+```
+npm i -g phone-wallet-keys
+```
+
+## Usage:
 
 ```
 1. mkdir MY_NEW_PROJECT
