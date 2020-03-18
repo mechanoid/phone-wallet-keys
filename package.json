@@ -1,6 +1,6 @@
 {
   "name": "phone-wallet-keys",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "bin/phone-wallet-keys.js",
   "bin": {
