@@ -24,8 +24,6 @@
     "fs-extra": "^8.1.0"
   },
   "files": [
-    "files/*",
-    "bin/*",
-
+    "files/*"
   ]
 }
