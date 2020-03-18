@@ -2,7 +2,7 @@
   "name": "phone-wallet-keys",
   "version": "1.0.2",
   "description": "",
-  "main": "index.js",
+  "main": "bin/phone-wallet-keys.js",
   "bin": {
     "phone-wallet-keys": "./bin/phone-wallet-keys.js"
   },
@@ -22,5 +22,10 @@
   "dependencies": {
     "arg": "^4.1.3",
     "fs-extra": "^8.1.0"
-  }
+  },
+  "files": [
+    "files/*",
+    "bin/*",
+
+  ]
 }
