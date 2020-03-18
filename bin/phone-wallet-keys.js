@@ -104,7 +104,7 @@ Please initialize a npm project with \`npm init\``)
   }
 
   const addEditorConfig = async () => createFromFile('.editorconfig')
-  const addGitIgnore = async () => createFromFile('.gitignore')
+  const addGitIgnore = async () => createFromFile('gitignore', '.gitignore')
 
   const addLicenseFile = async () => {
     const info = await packageInfo()
