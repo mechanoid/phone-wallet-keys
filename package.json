@@ -2,7 +2,9 @@
   "name": "phone-wallet-keys",
   "version": "1.0.4",
   "description": "",
-  "main": "bin/phone-wallet-keys.js",
+  "engines" : { "node" : ">=0.13" },
+  "main": "index.js",
+  "type": "module",
   "bin": {
     "phone-wallet-keys": "./bin/phone-wallet-keys.js"
   },
