@@ -20,5 +20,6 @@ allowed ARGS:
 ```
   --module / -m (Boolean): Initializes npm package with `"type": "module"` enabled
   --express / -e (Boolean): Initialize a default configured express app (--module is part of that automatically)
+  --without-standard / -n (Boolean): undefined
   --help / -h (Boolean): shows help message
 ```

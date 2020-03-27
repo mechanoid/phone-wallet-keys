@@ -91,10 +91,13 @@ export default (npmPackage, utils, config) => {
       await addProjectBinary()
       await addEditorConfig()
       await addLicenseFile()
+      await saveToGit('initialize empty js project')
 
       // npm is updating the package json again, so do it last
-      await addEslintStandard()
-      await saveToGit('initialize empty js project')
+      if (!config.withoutEslintStandardJS) {
+        await addEslintStandard()
+        await saveToGit('added standardjs elint setup')
+      }
 
       if (config.asESMProject) {
         await defineProjectAsModuleBased()

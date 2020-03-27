@@ -10,18 +10,21 @@ import phoneWalletKeys from '../index.js'
 const argOptions = {
   '--module': Boolean,
   '--express': Boolean,
+  '--without-standard': Boolean,
   '--help': Boolean
 }
 const aliases = {
   // aliases
   '-h': '--help',
   '-m': '--module',
-  '-e': '--express'
+  '-e': '--express',
+  '-n': '--without-standard'
 }
 
 const argDescriptions = {
   '--module': 'Initializes npm package with `"type": "module"` enabled',
   '--express': 'Initialize a default configured express app (--module is part of that automatically)',
+  '--without-standard': 'By default projects are enabled with StandardJS. You can skip that out completely with that option',
   '--help': 'shows help message'
 }
 
@@ -86,7 +89,8 @@ try {
 
   const config = {
     asESMProject: args['--module'] || args['--express'],
-    asExpressApp: args['--express']
+    asExpressApp: args['--express'],
+    withoutEslintStandardJS: args['--without-standard']
   }
 
   const bootstrap = phoneWalletKeys({ packageInfo, packageJsonPath }, { createFromFile, exec }, config)
