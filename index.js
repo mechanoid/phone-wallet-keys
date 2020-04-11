@@ -54,16 +54,10 @@ export default (npmPackage, utils, config) => {
         'eslint-plugin-standard'
       ],
       {
-        cwd: process.cwd()
+        cwd: process.cwd(),
+        stdio: 'inherit'
       }
     )
-    eslintInstall.stdout.on('data', data => {
-      console.log(`${data}`)
-    })
-
-    eslintInstall.stderr.on('data', data => {
-      console.error(`${data}`)
-    })
 
     eslintInstall.on('close', code => {
       if (code !== 0) {
@@ -102,14 +96,8 @@ export default (npmPackage, utils, config) => {
 
   const initGit = async () => {
     const [promise, gitInit] = spawn('git', ['init'], {
-      cwd: process.cwd()
-    })
-    gitInit.stdout.on('data', data => {
-      console.log(`${data}`)
-    })
-
-    gitInit.stderr.on('data', data => {
-      console.error(`${data}`)
+      cwd: process.cwd(),
+      stdio: 'inherit'
     })
 
     gitInit.on('close', code => {
@@ -123,17 +111,9 @@ export default (npmPackage, utils, config) => {
 
   const saveToGit = async message => {
     const [promise1, gitAdd] = spawn('git', ['add', '-A'], {
-      cwd: process.cwd()
+      cwd: process.cwd(),
+      stdio: 'inherit'
     })
-
-    gitAdd.stdout.on('data', data => {
-      console.log(`${data}`)
-    })
-
-    gitAdd.stderr.on('data', data => {
-      console.error(`${data}`)
-    })
-
     gitAdd.on('close', async code => {
       if (code !== 0) {
         console.log(`git add failed with code: ${code}`)
@@ -142,22 +122,16 @@ export default (npmPackage, utils, config) => {
 
     return promise1.then(() => {
       const [promise2, gitCommit] = spawn('git', ['commit', '-m', message], {
-        cwd: process.cwd()
+        cwd: process.cwd(),
+        stdio: 'inherit'
       })
 
-      gitCommit.stdout.on('data', data => {
-        console.log(`${data}`)
-      })
-
-      gitCommit.stderr.on('data', data => {
-        console.error(`${data}`)
-      })
       gitCommit.on('close', code => {
         if (code !== 0) {
           console.log(`git commit failed with code: ${code}`)
         }
 
-        console.log('committed:', message)
+        console.log('\ncommitted:', message, '\n\n')
       })
 
       return promise2
@@ -169,17 +143,10 @@ export default (npmPackage, utils, config) => {
       'npm',
       ['i', 'express', 'helmet', 'morgan', 'dotenv'],
       {
-        cwd: process.cwd()
+        cwd: process.cwd(),
+        stdio: 'inherit'
       }
     )
-
-    npmInstall.stdout.on('data', data => {
-      console.log(`${data}`)
-    })
-
-    npmInstall.stderr.on('data', data => {
-      console.error(`${data}`)
-    })
 
     npmInstall.on('close', code => {
       if (code !== 0) {
