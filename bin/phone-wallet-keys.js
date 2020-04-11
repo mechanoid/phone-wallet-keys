@@ -70,7 +70,6 @@ const __dirname = fileURLToPath(import.meta.url)
 const filesDir = path.resolve(__dirname, '..', '..', 'files')
 
 const tplPath = file => path.resolve(filesDir, file)
-console.log('YYY', tplPath('gitignore'))
 const projectPath = targetPath => path.resolve(process.cwd(), targetPath)
 
 const packageJsonPath = () => path.resolve(process.cwd(), 'package.json')
