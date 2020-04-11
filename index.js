@@ -40,11 +40,11 @@ export default (npmPackage, utils, config) => {
       }
     )
     eslintInstall.stdout.on('data', data => {
-      console.log(data)
+      console.log(`${data}`)
     })
 
     eslintInstall.stderr.on('data', data => {
-      console.error(data)
+      console.error(`${data}`)
     })
 
     eslintInstall.on('close', code => {
@@ -85,11 +85,11 @@ export default (npmPackage, utils, config) => {
       cwd: process.cwd()
     })
     gitInit.stdout.on('data', data => {
-      console.log(data)
+      console.log(`${data}`)
     })
 
     gitInit.stderr.on('data', data => {
-      console.error(data)
+      console.error(`${data}`)
     })
 
     gitInit.on('close', code => {
@@ -105,11 +105,11 @@ export default (npmPackage, utils, config) => {
     })
 
     gitAdd.stdout.on('data', data => {
-      console.log(data)
+      console.log(`${data}`)
     })
 
     gitAdd.stderr.on('data', data => {
-      console.error(data)
+      console.error(`${data}`)
     })
 
     gitAdd.on('close', code => {
@@ -121,11 +121,11 @@ export default (npmPackage, utils, config) => {
       })
 
       gitCommit.stdout.on('data', data => {
-        console.log(data)
+        console.log(`${data}`)
       })
 
       gitCommit.stderr.on('data', data => {
-        console.error(data)
+        console.error(`${data}`)
       })
       gitCommit.on('close', code => {
         if (code !== 0) {
@@ -153,11 +153,11 @@ export default (npmPackage, utils, config) => {
     )
 
     npmInstall.stdout.on('data', data => {
-      console.log(data)
+      console.log(`${data}`)
     })
 
     npmInstall.stderr.on('data', data => {
-      console.error(data)
+      console.error(`${data}`)
     })
 
     npmInstall.on('close', code => {
