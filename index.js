@@ -1,4 +1,5 @@
 import fs from 'fs-extra'
+import { spawn } from 'child_process'
 
 export default (npmPackage, utils, config) => {
   const addProjectBinary = async () => {
@@ -22,14 +23,42 @@ export default (npmPackage, utils, config) => {
   const addEslintStandard = async () => {
     await utils.createFromFile('.eslintrc')
 
-    const installCmd = 'npm i --save-dev eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-standard'
-    const { stdout, stderr } = await utils.exec(installCmd, { cwd: process.cwd() })
-    console.log(stdout)
-    console.log(stderr)
+    const eslintInstall = await spawn(
+      'npm',
+      [
+        'i',
+        '--save-dev',
+        'eslint',
+        'eslint-config-standard',
+        'eslint-plugin-import',
+        'eslint-plugin-node',
+        'eslint-plugin-promise',
+        'eslint-plugin-standard'
+      ],
+      {
+        cwd: process.cwd()
+      }
+    )
+    eslintInstall.stdout.on('data', data => {
+      console.log(data)
+    })
+
+    eslintInstall.stderr.on('data', data => {
+      console.error(data)
+    })
+
+    eslintInstall.on('close', code => {
+      if (code !== 0) {
+        console.log(
+          `npm install of eslint/standardjs dependendencies failed with code: ${code}`
+        )
+      }
+    })
   }
 
   const addEditorConfig = async () => utils.createFromFile('.editorconfig')
-  const addGitIgnore = async () => utils.createFromFile('gitignore', '.gitignore')
+  const addGitIgnore = async () =>
+    utils.createFromFile('gitignore', '.gitignore')
 
   const addLicenseFile = async () => {
     const info = await npmPackage.packageInfo()
@@ -52,29 +81,92 @@ export default (npmPackage, utils, config) => {
   }
 
   const initGit = async () => {
-    const { stdout, stderr } = await utils.exec('git init', { cwd: process.cwd() })
-    console.log(stdout)
-    console.log(stderr)
+    const gitInit = await spawn('git', ['init'], {
+      cwd: process.cwd()
+    })
+    gitInit.stdout.on('data', data => {
+      console.log(data)
+    })
+
+    gitInit.stderr.on('data', data => {
+      console.error(data)
+    })
+
+    gitInit.on('close', code => {
+      if (code !== 0) {
+        console.log(`git init failed with code: ${code}`)
+      }
+    })
   }
 
   const saveToGit = async message => {
-    const { stdout, stderr } = await utils.exec(`git add -A; git commit -m "${message}"`, { cwd: process.cwd() })
-    console.log(stdout)
-    console.log(stderr)
+    const gitAdd = spawn('git', ['add', '-A'], {
+      cwd: process.cwd()
+    })
+
+    gitAdd.stdout.on('data', data => {
+      console.log(data)
+    })
+
+    gitAdd.stderr.on('data', data => {
+      console.error(data)
+    })
+
+    gitAdd.on('close', code => {
+      if (code !== 0) {
+        console.log(`git add failed with code: ${code}`)
+      }
+      const gitCommit = spawn('git', ['commit', '-m', message], {
+        cwd: process.cwd()
+      })
+
+      gitCommit.stdout.on('data', data => {
+        console.log(data)
+      })
+
+      gitCommit.stderr.on('data', data => {
+        console.error(data)
+      })
+      gitCommit.on('close', code => {
+        if (code !== 0) {
+          console.log(`git commit failed with code: ${code}`)
+        }
+      })
+    })
   }
 
   const initializeExpressApp = async () => {
     const info = await npmPackage.packageInfo()
     if (!info.scripts.start) {
       info.scripts.start = `node -r dotenv/config bin/${info.name}.js`
-      info.scripts['dev:generate-self-signed-certs'] = 'mkdir certs; openssl req -nodes -new -x509 -keyout certs/server.key -out certs/server.cert'
+      info.scripts['dev:generate-self-signed-certs'] =
+        'mkdir certs; openssl req -nodes -new -x509 -keyout certs/server.key -out certs/server.cert'
       await fs.outputJson(npmPackage.packageJsonPath(), info, { spaces: 2 })
     }
 
-    const installCmd = 'npm i express helmet morgan dotenv'
-    const { stdout, stderr } = await utils.exec(installCmd, { cwd: process.cwd() })
-    console.log(stdout)
-    console.log(stderr)
+    const npmInstall = await spawn(
+      'npm',
+      ['i', 'express', 'helmet', 'morgan', 'dotenv'],
+      {
+        cwd: process.cwd()
+      }
+    )
+
+    npmInstall.stdout.on('data', data => {
+      console.log(data)
+    })
+
+    npmInstall.stderr.on('data', data => {
+      console.error(data)
+    })
+
+    npmInstall.on('close', code => {
+      if (code !== 0) {
+        console.log(
+          `npm install of express dependencies failed with code: ${code}`
+        )
+      }
+    })
 
     await utils.createFromFile('express.bin.js', `bin/${info.name}.js`)
     await utils.createFromFile('express.app.js', 'index.js')

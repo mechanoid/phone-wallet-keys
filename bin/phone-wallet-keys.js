@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 import util from 'util'
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'url'
 import path from 'path'
 import fs from 'fs-extra'
 import arg from 'arg'
-import { exec as callbackExec } from 'child_process'
 import phoneWalletKeys from '../index.js'
 
 const argOptions = {
@@ -23,20 +22,27 @@ const aliases = {
 
 const argDescriptions = {
   '--module': 'Initializes npm package with `"type": "module"` enabled',
-  '--express': 'Initialize a default configured express app (--module is part of that automatically)',
-  '--without-standard': 'By default projects are enabled with StandardJS. You can skip that out completely with that option',
+  '--express':
+    'Initialize a default configured express app (--module is part of that automatically)',
+  '--without-standard':
+    'By default projects are enabled with StandardJS. You can skip that out completely with that option',
   '--help': 'shows help message'
 }
 
 const alias = name => {
-  const entry = Object.entries(aliases).find(([alias, option]) => option === name)
+  const entry = Object.entries(aliases).find(
+    ([alias, option]) => option === name
+  )
   return entry ? entry[0] : null
 }
 
 const argsHelp = () => {
-  const options = Object
-    .entries(argOptions)
-    .map(([name, type]) => ({ name, type, alias: alias(name), description: argDescriptions[name] }))
+  const options = Object.entries(argOptions).map(([name, type]) => ({
+    name,
+    type,
+    alias: alias(name),
+    description: argDescriptions[name]
+  }))
 
   return `
 Phone Wallet Keys is a bootstrapping help for nodejs projects.
@@ -50,7 +56,13 @@ Usage:
 
 allowed ARGS:
 
-${options.map(o => `  ${o.name}${o.alias ? ` / ${o.alias}` : ''} (${o.type && o.type.name}): ${o.description}`).join('\n')}
+${options
+  .map(
+    o =>
+      `  ${o.name}${o.alias ? ` / ${o.alias}` : ''} (${o.type &&
+        o.type.name}): ${o.description}`
+  )
+  .join('\n')}
 `
 }
 
@@ -58,7 +70,7 @@ const __dirname = fileURLToPath(import.meta.url)
 const filesDir = path.resolve(__dirname, '..', '..', 'files')
 
 const tplPath = file => path.resolve(filesDir, file)
-console.log('YYY',tplPath('gitignore'));
+console.log('YYY', tplPath('gitignore'))
 const projectPath = targetPath => path.resolve(process.cwd(), targetPath)
 
 const packageJsonPath = () => path.resolve(process.cwd(), 'package.json')
@@ -75,9 +87,8 @@ Please initialize a npm project with \`npm init\``)
   }
 }
 
-const createFromFile = (src, target) => fs.copy(tplPath(src), projectPath(target || src))
-
-const exec = util.promisify(callbackExec)
+const createFromFile = (src, target) =>
+  fs.copy(tplPath(src), projectPath(target || src))
 
 try {
   const args = arg(Object.assign({}, argOptions, aliases))
@@ -93,12 +104,18 @@ try {
     withoutEslintStandardJS: args['--without-standard']
   }
 
-  const bootstrap = phoneWalletKeys({ packageInfo, packageJsonPath }, { createFromFile, exec }, config)
+  const bootstrap = phoneWalletKeys(
+    { packageInfo, packageJsonPath },
+    { createFromFile },
+    config
+  )
 
   bootstrap()
-    .then(() => console.log(`
+    .then(() =>
+      console.log(`
 Phone! Wallet! Keys!
-----------------> lets go!!`))
+----------------> lets go!!`)
+    )
     .catch(e => {
       console.error(e)
       process.exit(1)
