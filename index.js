@@ -1,5 +1,23 @@
 import fs from 'fs-extra'
-import { spawn } from 'child_process'
+import { spawn as spawnStream } from 'child_process'
+
+const spawn = (command, args, options) => {
+  const cmd = spawnStream(command, args, options)
+
+  const p = new Promise((resolve, reject) => {
+    cmd.on('close', code => {
+      if (code !== 0) {
+        const message = `${command} ${(args || []).join(
+          ' '
+        )} failed with ${code}`
+        reject(new Error(message))
+      }
+      resolve()
+    })
+  })
+
+  return [p, cmd]
+}
 
 export default (npmPackage, utils, config) => {
   const addProjectBinary = async () => {
@@ -23,7 +41,7 @@ export default (npmPackage, utils, config) => {
   const addEslintStandard = async () => {
     await utils.createFromFile('.eslintrc')
 
-    const eslintInstall = await spawn(
+    const [promise, eslintInstall] = spawn(
       'npm',
       [
         'i',
@@ -54,6 +72,8 @@ export default (npmPackage, utils, config) => {
         )
       }
     })
+
+    return promise
   }
 
   const addEditorConfig = async () => utils.createFromFile('.editorconfig')
@@ -81,7 +101,7 @@ export default (npmPackage, utils, config) => {
   }
 
   const initGit = async () => {
-    const gitInit = await spawn('git', ['init'], {
+    const [promise, gitInit] = spawn('git', ['init'], {
       cwd: process.cwd()
     })
     gitInit.stdout.on('data', data => {
@@ -97,10 +117,12 @@ export default (npmPackage, utils, config) => {
         console.log(`git init failed with code: ${code}`)
       }
     })
+
+    return promise
   }
 
   const saveToGit = async message => {
-    const gitAdd = spawn('git', ['add', '-A'], {
+    const [promise1, gitAdd] = spawn('git', ['add', '-A'], {
       cwd: process.cwd()
     })
 
@@ -112,11 +134,14 @@ export default (npmPackage, utils, config) => {
       console.error(`${data}`)
     })
 
-    gitAdd.on('close', code => {
+    gitAdd.on('close', async code => {
       if (code !== 0) {
         console.log(`git add failed with code: ${code}`)
       }
-      const gitCommit = spawn('git', ['commit', '-m', message], {
+    })
+
+    return promise1.then(() => {
+      const [promise2, gitCommit] = spawn('git', ['commit', '-m', message], {
         cwd: process.cwd()
       })
 
@@ -131,20 +156,16 @@ export default (npmPackage, utils, config) => {
         if (code !== 0) {
           console.log(`git commit failed with code: ${code}`)
         }
+
+        console.log('committed:', message)
       })
+
+      return promise2
     })
   }
 
-  const initializeExpressApp = async () => {
-    const info = await npmPackage.packageInfo()
-    if (!info.scripts.start) {
-      info.scripts.start = `node -r dotenv/config bin/${info.name}.js`
-      info.scripts['dev:generate-self-signed-certs'] =
-        'mkdir certs; openssl req -nodes -new -x509 -keyout certs/server.key -out certs/server.cert'
-      await fs.outputJson(npmPackage.packageJsonPath(), info, { spaces: 2 })
-    }
-
-    const npmInstall = await spawn(
+  const installExpressDeps = async () => {
+    const [promise, npmInstall] = spawn(
       'npm',
       ['i', 'express', 'helmet', 'morgan', 'dotenv'],
       {
@@ -167,6 +188,19 @@ export default (npmPackage, utils, config) => {
         )
       }
     })
+    return promise
+  }
+
+  const initializeExpressApp = async () => {
+    const info = await npmPackage.packageInfo()
+    if (!info.scripts.start) {
+      info.scripts.start = `node -r dotenv/config bin/${info.name}.js`
+      info.scripts['dev:generate-self-signed-certs'] =
+        'mkdir certs; openssl req -nodes -new -x509 -keyout certs/server.key -out certs/server.cert'
+      await fs.outputJson(npmPackage.packageJsonPath(), info, { spaces: 2 })
+    }
+
+    await installExpressDeps()
 
     await utils.createFromFile('express.bin.js', `bin/${info.name}.js`)
     await utils.createFromFile('express.app.js', 'index.js')
