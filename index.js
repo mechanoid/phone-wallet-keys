@@ -141,7 +141,7 @@ export default (npmPackage, utils, config) => {
   const installExpressDeps = async () => {
     const [promise, npmInstall] = spawn(
       'npm',
-      ['i', 'express', 'helmet', 'morgan', 'dotenv'],
+      ['i', 'express', 'helmet', 'morgan', 'yenv'],
       {
         cwd: process.cwd(),
         stdio: 'inherit'
@@ -161,7 +161,7 @@ export default (npmPackage, utils, config) => {
   const initializeExpressApp = async () => {
     const info = await npmPackage.packageInfo()
     if (!info.scripts.start) {
-      info.scripts.start = `node -r dotenv/config bin/${info.name}.js`
+      info.scripts.start = `node bin/${info.name}.js`
       await fs.outputJson(npmPackage.packageJsonPath(), info, { spaces: 2 })
     }
 
@@ -169,8 +169,8 @@ export default (npmPackage, utils, config) => {
 
     await utils.createFromFile('express.bin.js', `bin/${info.name}.js`)
     await utils.createFromFile('express.app.js', 'index.js')
-    await utils.createFromFile('.env.template')
-    await utils.createFromFile('.env.template', '.env')
+    await utils.createFromFile('env.template.yaml')
+    await utils.createFromFile('env.template.yaml', 'env.yaml')
 
     return info
   }
