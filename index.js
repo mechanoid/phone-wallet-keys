@@ -162,8 +162,6 @@ export default (npmPackage, utils, config) => {
     const info = await npmPackage.packageInfo()
     if (!info.scripts.start) {
       info.scripts.start = `node -r dotenv/config bin/${info.name}.js`
-      info.scripts['dev:generate-self-signed-certs'] =
-        'mkdir certs; openssl req -nodes -new -x509 -keyout certs/server.key -out certs/server.cert'
       await fs.outputJson(npmPackage.packageJsonPath(), info, { spaces: 2 })
     }
 
