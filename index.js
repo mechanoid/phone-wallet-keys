@@ -50,8 +50,7 @@ export default (npmPackage, utils, config) => {
         'eslint-config-standard',
         'eslint-plugin-import',
         'eslint-plugin-node',
-        'eslint-plugin-promise',
-        'eslint-plugin-standard'
+        'eslint-plugin-promise'
       ],
       {
         cwd: process.cwd(),
