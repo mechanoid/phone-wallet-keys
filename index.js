@@ -140,7 +140,7 @@ export default (npmPackage, utils, config) => {
   const installExpressDeps = async () => {
     const [promise, npmInstall] = spawn(
       'npm',
-      ['i', 'express', 'helmet', 'morgan', 'yenv'],
+      ['i', 'express', 'helmet', 'morgan', 'dotenv'],
       {
         cwd: process.cwd(),
         stdio: 'inherit'

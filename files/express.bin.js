@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
-import yenv from 'yenv'
 import app from '../index.js'
 
-const env = yenv('env.yaml', { env: process.env.NODE_ENV === 'production' ? 'production' : 'development' })
+const env = process.env
 
 const config = {
   port: env.PORT
