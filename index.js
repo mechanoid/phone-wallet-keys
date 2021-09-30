@@ -168,8 +168,8 @@ export default (npmPackage, utils, config) => {
 
     await utils.createFromFile('express.bin.js', `bin/${info.name}.js`)
     await utils.createFromFile('express.app.js', 'index.js')
-    await utils.createFromFile('env.template.yaml')
-    await utils.createFromFile('env.template.yaml', 'env.yaml')
+    await utils.createFromFile('.env.template')
+    await utils.createFromFile('.env.template', '.env')
 
     return info
   }
