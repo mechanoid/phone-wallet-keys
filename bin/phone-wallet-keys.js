@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import util from 'util'
 import { fileURLToPath } from 'url'
 import path from 'path'
 import fs from 'fs-extra'
