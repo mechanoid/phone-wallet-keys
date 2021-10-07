@@ -10,6 +10,7 @@ const argOptions = {
   '--module': Boolean,
   '--express': Boolean,
   '--without-standard': Boolean,
+  '--without-license': Boolean,
   '--help': Boolean
 }
 const aliases = {
@@ -17,7 +18,8 @@ const aliases = {
   '-h': '--help',
   '-m': '--module',
   '-e': '--express',
-  '-n': '--without-standard'
+  '-n': '--without-standard',
+  '-l': '--without-license'
 }
 
 const argDescriptions = {
@@ -100,7 +102,8 @@ try {
   const config = {
     asESMProject: args['--module'] || args['--express'],
     asExpressApp: args['--express'],
-    withoutEslintStandardJS: args['--without-standard']
+    withoutEslintStandardJS: args['--without-standard'],
+    withoutLicense: args['--without-license']
   }
 
   const bootstrap = phoneWalletKeys(
