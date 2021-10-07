@@ -20,6 +20,16 @@ allowed ARGS:
 ```
   --module / -m (Boolean): Initializes npm package with `"type": "module"` enabled
   --express / -e (Boolean): Initialize a default configured express app (--module is part of that automatically)
-  --without-standard / -n (Boolean): undefined
+  --without-standard (Boolean): By default projects are enabled with StandardJS. You can skip that out completely with that option
+  --without-license (Boolean): undefined
+  --license-holder (String): undefined
   --help / -h (Boolean): shows help message
+```
+
+you can also add a `.phone-wallet-keys.mjs` file, exporting a config object in the a parent directory of your project, like so:
+
+```
+export default {
+  '--license-holder': 'Starlord'
+}
 ```

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url'
 import path from 'path'
 import fs from 'fs-extra'
 import arg from 'arg'
+import { findUp } from 'find-up'
 import phoneWalletKeys from '../index.js'
 
 const argOptions = {
@@ -10,15 +11,14 @@ const argOptions = {
   '--express': Boolean,
   '--without-standard': Boolean,
   '--without-license': Boolean,
+  '--license-holder': String,
   '--help': Boolean
 }
 const aliases = {
   // aliases
   '-h': '--help',
   '-m': '--module',
-  '-e': '--express',
-  '-n': '--without-standard',
-  '-l': '--without-license'
+  '-e': '--express'
 }
 
 const argDescriptions = {
@@ -87,8 +87,34 @@ Please initialize a npm project with \`npm init\``)
   }
 }
 
-const createFromFile = (src, target) =>
-  fs.copy(tplPath(src), projectPath(target || src))
+const createFromFile = async (src, target, data = null) => {
+  if (data) {
+    const content = await (await fs.readFile(tplPath(src))).toString()
+    const interpolated = Object.keys(data).reduce((res, key) => res.replace(`$\{${key}}`, data[key]), content)
+    return await fs.writeFile(projectPath(target || src), interpolated)
+  }
+
+  return fs.copy(tplPath(src), projectPath(target || src))
+}
+
+let clientConfig
+
+try {
+  const clientConfigPath = await findUp('.phone-wallet-keys.mjs', '.phone-wallet-keys.js')
+  console.log(`found client defaults at: ${clientConfigPath}`);
+  if (clientConfigPath) {
+    console.log('resolve client config');
+    clientConfig = await import(clientConfigPath)
+  }
+} catch(e) {
+}
+
+
+if (!!clientConfig) {
+  clientConfig = clientConfig.default
+} else {
+  clientConfig = {}
+}
 
 try {
   const args = arg(Object.assign({}, argOptions, aliases))
@@ -99,10 +125,11 @@ try {
   }
 
   const config = {
-    asESMProject: args['--module'] || args['--express'],
-    asExpressApp: args['--express'],
-    withoutEslintStandardJS: args['--without-standard'],
-    withoutLicense: args['--without-license']
+    asESMProject: args['--module'] || args['--express'] || clientConfig['--module'],
+    asExpressApp: args['--express'] || clientConfig['--express'],
+    withoutEslintStandardJS: args['--without-standard'] || clientConfig['--without-standard'],
+    withoutLicense: args['--without-license'] || clientConfig['--without-license'],
+    licenseHolder:  args['--license-holder'] || clientConfig['--license-holder']
   }
 
   const bootstrap = phoneWalletKeys(

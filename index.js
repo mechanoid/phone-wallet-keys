@@ -76,7 +76,7 @@ export default (npmPackage, utils, config) => {
 
   const addLicenseFile = async () => {
     const info = await npmPackage.packageInfo()
-    await utils.createFromFile('LICENSE')
+    await utils.createFromFile('LICENSE', null, { currentYear: (new Date()).getFullYear(), licenseHolder: config.licenseHolder })
     if (info.license !== 'MIT') {
       info.license = 'MIT'
       await fs.outputJson(npmPackage.packageJsonPath(), info, { spaces: 2 })
@@ -90,8 +90,9 @@ export default (npmPackage, utils, config) => {
       info.type = 'module'
       info.module = 'index.js'
       await fs.outputJson(npmPackage.packageJsonPath(), info, { spaces: 2 })
+      return [info, true]
     }
-    return info
+    return [info, false]
   }
 
   const initGit = async () => {
@@ -182,7 +183,7 @@ export default (npmPackage, utils, config) => {
       await addProjectBinary()
       await addEditorConfig()
 
-      if (!config.withoutLicense) {
+      if (!config.withoutLicense && !!config.licenseHolder) {
         await addLicenseFile()
       }
 
@@ -195,8 +196,10 @@ export default (npmPackage, utils, config) => {
       }
 
       if (config.asESMProject) {
-        await defineProjectAsModuleBased()
-        await saveToGit('define app as module based')
+        const [, changed] = await defineProjectAsModuleBased()
+        if (changed) {
+          await saveToGit('define app as module based')
+        }
       }
 
       if (config.asExpressApp) {
