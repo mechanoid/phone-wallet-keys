@@ -2,10 +2,12 @@
 
 import app from '../index.js'
 
+const env = process.env
+
 const config = {
-  port: process.env.PORT
+  port: env.PORT
 }
 
 const server = app(config).listen(config.port, () => {
-  console.log(`listening to port: ${server.address().port}`)
+  console.log(`started at http://localhost:${server.address().port}`)
 })
