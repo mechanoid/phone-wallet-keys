@@ -47,10 +47,8 @@ export default (npmPackage, utils, config) => {
         'i',
         '--save-dev',
         'eslint',
-        'eslint-config-standard',
-        'eslint-plugin-import',
-        'eslint-plugin-node',
-        'eslint-plugin-promise'
+        'eslint-config-standard@17.0.0-1',
+        'eslint-plugin-node'
       ],
       {
         cwd: process.cwd(),
